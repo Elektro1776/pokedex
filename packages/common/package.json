@@ -4,7 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.18.0",
     "babel-plugin-universal-import": "^4.0.0",
+    "extract-css-chunks-webpack-plugin": "^4.3.2",
     "prop-types": "^15.7.2",
     "ramda": "^0.26.1",
     "react-hot-loader": "^4.8.4",
@@ -13,6 +15,7 @@
     "webpack-flush-chunks": "^2.0.3"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@hot-loader/react-dom": "^16.8.6"
   }

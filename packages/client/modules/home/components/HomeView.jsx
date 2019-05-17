@@ -1,8 +1,8 @@
 import React from 'react';
+import CardList from './CardList';
 
-
-export default () => {
+export default (props) => {
   return (
-    <div>Hotttt</div>
+    <CardList pokemonList={props.pokemon} />
   )
 }

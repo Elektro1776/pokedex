@@ -1,6 +1,8 @@
 const path = require('path');
 const fs = require('fs');
-// const webpack = require('webpack');
+const WriteFilePlugin = require('write-file-webpack-plugin');
+
+const webpack = require('webpack');
 
 const res = p => path.resolve(__dirname, p);
 
@@ -13,16 +15,17 @@ const externals = fs
     return externals;
   }, {});
 
-// externals['react-dom/server'] = 'commonjs react-dom/server';
+externals['@hot-loader/react-dom'] = 'commonjs @hot-loader/react-dom';
 
 module.exports = {
   name: 'server',
+  devtool: 'source-map',
   target: 'node',
-  entry: './packages/server/middleware/render.js',
+  entry: ['regenerator-runtime/runtime.js', './packages/server/middleware/render.js'],
   mode: 'development',
   externals: externals,
   output: {
-    filename: 'dev-server-bundle.js',
+    filename: '[name]-server.js',
     path: path.resolve(__dirname, '../build'),
     libraryTarget: 'commonjs2'
   },
@@ -36,16 +39,49 @@ module.exports = {
     rules: [
       {
         test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
         use: [
           {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-env', '@babel/preset-react']
-            }
+            loader: 'babel-loader'
           }
-        ],
-        exclude: /node_modules/
+        ]
+      },
+      {
+        test: /\.(scss|sass)$/,
+        use: [
+          // { loader:  "style-loader"}, // creates style nodes from JS strings
+
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true
+              // localIdentName: '[local]'
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              config: {
+                path: path.resolve(__dirname, './config')
+              }
+            }
+          }, // translates CSS into CommonJS
+          {
+            loader: 'sass-loader'
+          } // compiles Sass to CSS, using Node Sass by default
+        ]
       }
     ]
-  }
+  },
+  plugins: [
+    new WriteFilePlugin(),
+    new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('development')
+      }
+    })
+  ]
 };
